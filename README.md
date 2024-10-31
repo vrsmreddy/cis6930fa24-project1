@@ -633,270 +633,132 @@ pipenv run python -m pytest
 ```
 
 **Test Files**:
+- **`test_dates.py`**:
+
+The `test_dates.py` file uses the `unittest` framework to verify the correctness of the `redact_dates` function. Below is a summary of the main test cases included:
+
+1. **Day Name Redaction**
+   - **Test Name**: `test_day_name`
+   - **Purpose**: To verify that the function correctly redacts full day names (e.g., "Monday").
+   - **Expected Output**: The day name is replaced by the redaction character (`█`), and the count of redactions is correctly updated.
+
+2. **Duration Not Redacted**
+   - **Test Name**: `test_duration`
+   - **Purpose**: To ensure that durations (e.g., "3 weeks") are not mistakenly redacted, as they are not specific dates.
+   - **Expected Output**: The duration remains intact, and the redaction count is zero.
+
+3. **ISO Date Redaction**
+   - **Test Name**: `test_iso_date`
+   - **Purpose**: To verify that dates in ISO format (e.g., "2025-12-31") are correctly redacted.
+   - **Expected Output**: The date is replaced by redaction characters, and the count is updated.
+
+4. **Standard Date Format Redaction**
+   - **Test Name**: `test_standard_date`
+   - **Purpose**: To ensure that dates in standard formats (e.g., "12/25/2025") are correctly redacted.
+   - **Expected Output**: The date is replaced by redaction characters, and the count is updated.
+
+5. **Written Date Redaction**
+   - **Test Name**: `test_written_date`
+   - **Purpose**: To verify that written dates (e.g., "April 5th, 2020") are correctly redacted.
+   - **Expected Output**: The date is replaced by redaction characters, and the count is updated.
+
+
+- **`test_addresses.py`**:
+
+The `test_addresses.py` file uses the `unittest` framework to verify the correctness of the `redact_addresses` function. Below is a summary of the main test cases included:
+
+1. **Address in Signature Redaction**
+   - **Test Name**: `test_address_in_signature`
+   - **Purpose**: To verify that the function correctly redacts addresses found in the email signature (e.g., "123 Main Street, 5th Floor").
+   - **Expected Output**: The address is replaced by the redaction character (`█`), and the count of redactions is correctly updated.
+
+2. **Address in Body Redaction**
+   - **Test Name**: `test_address_in_body`
+   - **Purpose**: To ensure that addresses provided in the main body of the text (e.g., "456 Elm Street, Anytown, CA 90210") are correctly redacted.
+   - **Expected Output**: The address is replaced by redaction characters, and the count is updated.
+
+3. **No Address Present**
+   - **Test Name**: `test_no_address`
+   - **Purpose**: To verify that the function does not mistakenly redact text when no address is present.
+   - **Expected Output**: The text remains unchanged, and the redaction count is zero.
 
 - **`test_names.py`**:
-  This file contains unit tests to validate the functionality of redacting names and metadata fields. It tests email redaction, metadata fields like `X-From` and `X-Origin`, folder names, and ensuring that unrelated fields (like dates) remain unmodified.
 
-  ```python
-  # test_names.py
-  
-  import unittest
-  from redactor import redact_names  
-  class TestRedactNames(unittest.TestCase):
+The `test_names.py` file uses the `unittest` framework to verify the correctness of the `redact_names` function. Below is a summary of the main test cases included:
 
-      def test_email_redaction(self):
-          text = "Contact me at john.doe@example.com for more information."
-          expected_output = "Contact me at ████████████████████ for more information."
-          redacted_text, _ = redact_names(text)
-          self.assertEqual(redacted_text, expected_output)
+1. **Email Address Redaction**
+   - **Test Name**: `test_email_redaction`
+   - **Purpose**: To verify that the function correctly redacts email addresses from the text (e.g., "john.doe@example.com").
+   - **Expected Output**: The email address is replaced by the redaction character (`█`), and the count of redactions is correctly updated.
 
-      def test_metadata_redaction(self):
-          text = """
-          X-From: Jane Doe
-          X-To: jdoe <john.doe@example.com>
-          X-Origin: Doe-J
-          """
-          expected_output = """
-          X-From: ████████
-          X-To: ████ <████████████████████>
-          X-Origin: █████
-          """
-          redacted_text, _ = redact_names(text)
-          self.assertEqual(redacted_text.strip(), expected_output.strip())
+2. **Metadata Field Redaction**
+   - **Test Name**: `test_metadata_redaction`
+   - **Purpose**: To ensure that personal names appearing in metadata fields (e.g., "X-From", "X-To", "X-Origin") are correctly redacted.
+   - **Expected Output**: The names in the metadata fields are replaced by redaction characters, and the count is updated.
 
-      def test_x_filename_redaction(self):
-          text = "X-FileName: jdoe (Non-Privileged).pst"
-          expected_output = "X-FileName: ████ (Non-Privileged).pst"
-          redacted_text, _ = redact_names(text)
-          self.assertEqual(redacted_text, expected_output)
+3. **Filename Metadata Redaction**
+   - **Test Name**: `test_x_filename_redaction`
+   - **Purpose**: To verify that personal names in file metadata (e.g., "X-FileName") are correctly redacted.
+   - **Expected Output**: The filename is partially redacted to remove sensitive information, while other parts of the metadata remain intact.
 
-      def test_x_folder_redaction(self):
-          text = "X-Folder: \Doe_John\Inbox"
-          expected_output = "X-Folder: \████████\Inbox"
-          redacted_text, _ = redact_names(text)
-          self.assertEqual(redacted_text, expected_output)
+4. **Folder Path Redaction**
+   - **Test Name**: `test_x_folder_redaction`
+   - **Purpose**: To ensure that personal names in folder paths (e.g., "X-Folder") are correctly redacted, while common folder names are preserved.
+   - **Expected Output**: Only the sensitive parts of the folder paths are replaced by redaction characters, and the count is updated.
 
-      def test_date_preservation(self):
-          text = "Date: Mon, 14 May 2001 16:39:00 -0700 (PDT)"
-          expected_output = "Date: Mon, 14 May 2001 16:39:00 -0700 (PDT)"
-          redacted_text, _ = redact_names(text)
-          self.assertEqual(redacted_text, expected_output)
-  
-  if __name__ == '__main__':
-      unittest.main()
-  ```
+5. **Preservation of Non-Sensitive Dates**
+   - **Test Name**: `test_date_preservation`
+   - **Purpose**: To verify that non-sensitive dates (e.g., "Mon, 14 May 2001") appearing in metadata are not incorrectly redacted.
+   - **Expected Output**: The date remains intact, and the redaction count remains unchanged.
 
-- **`test_dates.py`**:
-  This file tests the functionality of redacting different date formats. It covers day names (e.g., "Monday"), ISO date formats (e.g., "2025-12-31"), standard date formats (e.g., "12/25/2025"), and written dates (e.g., "April 5th, 2020"). It also verifies that durations (e.g., "3 weeks") are not incorrectly redacted.
+- **`test_phones.py`**:
 
-  ```python
-  # test_dates.py
-  
-  import unittest
-  import textwrap
-  from redactor import redact_dates  # Ensure 'redact_dates.py' is in the same directory or adjust the import accordingly
-  
-  class TestDatesRedaction(unittest.TestCase):
+The `test_phones.py` file uses the `unittest` framework to verify the correctness of the `redact_phones` function. Below is a summary of the main test cases included:
 
-      def test_day_name(self):
-          text = "Meeting is scheduled on Monday."
-          redacted_part = '█' * len("Monday")  # 6 '█'
-          expected = f"Meeting is scheduled on {redacted_part}."
-          redacted_text, count = redact_dates(text)
-          self.assertEqual(redacted_text, expected)
-          self.assertEqual(count, 1)  # One redaction for "Monday"
+1. **Standard Phone Number Redaction**
+   - **Test Name**: `test_standard_phone`
+   - **Purpose**: To verify that phone numbers formatted with parentheses (e.g., "(123) 456-7890") are correctly redacted.
+   - **Expected Output**: The phone number is replaced by the redaction character (`█`), and the count of redactions is correctly updated.
 
-      def test_duration(self):
-          text = "The project will take 3 weeks to complete."
-          expected = "The project will take 3 weeks to complete."
-          redacted_text, count = redact_dates(text)
-          self.assertEqual(redacted_text, expected)
-          self.assertEqual(count, 0)  # Duration should not be redacted
+2. **Dashed Phone Number Redaction**
+   - **Test Name**: `test_dashed_phone`
+   - **Purpose**: To ensure that phone numbers using dashes as separators (e.g., "123-456-7890") are correctly redacted.
+   - **Expected Output**: The phone number is replaced by redaction characters, and the count is updated.
 
-      def test_iso_date(self):
-          text = "The deadline is 2025-12-31."
-          redacted_part = '█' * len("2025-12-31")  # 10 '█'
-          expected = f"The deadline is {redacted_part}."
-          redacted_text, count = redact_dates(text)
-          self.assertEqual(redacted_text, expected)
-          self.assertEqual(count, 1)  # One redaction for "2025-12-31"
+3. **Dotted Phone Number Redaction**
+   - **Test Name**: `test_dotted_phone`
+   - **Purpose**: To verify that phone numbers using dots as separators (e.g., "123.456.7890") are correctly redacted.
+   - **Expected Output**: The phone number is replaced by redaction characters, and the count is updated.
 
-      def test_standard_date(self):
-          text = "The event is on 12/25/2025."
-          redacted_part = '█' * len("12/25/2025")  # 10 '█'
-          expected = f"The event is on {redacted_part}."
-          redacted_text, count = redact_dates(text)
-          self.assertEqual(redacted_text, expected)
-          self.assertEqual(count, 1)  # One redaction for "12/25/2025"
+4. **Plain Phone Number Redaction**
+   - **Test Name**: `test_plain_phone`
+   - **Purpose**: To verify that plain phone numbers without any separators (e.g., "1234567890") are correctly redacted.
+   - **Expected Output**: The phone number is replaced by redaction characters, and the count is updated.
 
-      def test_written_date(self):
-          text = "We met on April 5th, 2020."
-          redacted_part = '█' * len("April 5th, 2020")  # 15 '█'
-          expected = f"We met on {redacted_part}."
-          redacted_text, count = redact_dates(text)
-          self.assertEqual(redacted_text, expected)
-          self.assertEqual(count, 1)  # One redaction for "April 5th, 2020"
-
-  if __name__ == '__main__':
-      unittest.main()
-  ```
+5. **Invalid Phone Number Preservation**
+   - **Test Name**: `test_invalid_phone`
+   - **Purpose**: To ensure that invalid phone numbers (e.g., "12345") are not mistakenly redacted.
+   - **Expected Output**: The text remains unchanged, and the redaction count is zero.
 
 - **`test_concepts.py`**:
-  This file tests the redaction of concepts and their synonyms using the `redact_concepts` function. It includes tests for sentences with exact concept matches, sentences without any match, and sentences containing synonyms of a concept (e.g., "house" and "mansion").
 
-  ```python
-  # tests/test_concepts.py
-  
-  import unittest
-  import textwrap
-  from redactor import redact_concepts  # Adjust the import path as necessary
-  from redactor import sentence_model, nlp, REDACTION_CHAR  # Ensure these are accessible
-  
-  class TestConceptsRedaction(unittest.TestCase):
+The `test_concepts.py` file uses the `unittest` framework to verify the correctness of the `redact_concepts` function. Below is a summary of the main test cases included:
 
-      def test_exact_concept_match(self):
-          text = textwrap.dedent("""
-              The conference will be held in New York next month.
-              We are excited about the upcoming event.
-              Make sure to register early.
-          """)
-          concepts = ["conference"]
-          
-          redacted_sentence = ''.join(REDACTION_CHAR for _ in "The conference will be held in New York next month.")
-          expected = textwrap.dedent(f"""
-              {redacted_sentence}
-              We are excited about the upcoming event.
-              Make sure to register early.
-          """).strip()
-          
-          redacted_text, count = redact_concepts(text, concepts)
-          self.assertEqual(redacted_text.strip(), expected)
-          self.assertEqual(count, 1)  # One sentence redacted
+1. **Exact Concept Match Redaction**
+   - **Test Name**: `test_exact_concept_match`
+   - **Purpose**: To verify that sentences containing the exact concept (e.g., "conference") are correctly redacted.
+   - **Expected Output**: The entire sentence containing the concept is replaced by the redaction character (`█`), and the count of redactions is correctly updated.
 
-      def test_no_concept_match(self):
-          text = textwrap.dedent("""
-              The weather today is sunny and bright.
-              Let's plan for a picnic this weekend.
-              Remember to bring sunscreen and water.
-          """)
-          concepts = ["conference"]
-          
-          expected = textwrap.dedent("""
-              The weather today is sunny and bright.
-              Let's plan for a picnic this weekend.
-              Remember to bring sunscreen and water.
-          """).strip()
-          
-          redacted_text, count = redact_concepts(text, concepts)
-          self.assertEqual(redacted_text.strip(), expected)
-          self.assertEqual(count, 0)  # No sentences redacted
-      
-      def test_house_concept_redaction(self):
-          input_text = textwrap.dedent("""
-              Jack pursued his journey. He walked on till after sunset, when to his great joy, he espied a large mansion. A plain-looking woman was at the door: he accosted her, begging she would give him a morsel of bread and a night’s lodging. She expressed the greatest surprise, and said it was quite uncommon to see a human being near their house; for it was well known that her husband was a powerful giant, who would never eat anything but human flesh, if he could possibly get it; that he would walk fifty miles to procure it, usually being out the whole day for that purpose.
-          """).strip()
+2. **No Concept Match**
+   - **Test Name**: `test_no_concept_match`
+   - **Purpose**: To ensure that sentences without the specified concept or its synonyms are not mistakenly redacted.
+   - **Expected Output**: The text remains unchanged, and the redaction count is zero.
 
-          expected_output = textwrap.dedent("""
-              Jack pursued his journey. █████████████████████████████████████████████████████████████████████████████████ A plain-looking woman was at the door: he accosted her, begging she would give him a morsel of bread and a night’s lodging. ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
-          """).strip()
+3. **Concept Synonym Redaction**
+   - **Test Name**: `test_house_concept_redaction`
+   - **Purpose**: To verify that sentences containing a concept (e.g., "house") or its synonyms (e.g., "mansion") are correctly redacted.
+   - **Expected Output**: All sentences containing the concept or its synonyms are replaced by redaction characters, and the count is updated accordingly.
 
-          concepts = ["house"]
-
-          redacted_text, count = redact_concepts(input_text, concepts)
-          self.assertEqual(redacted_text.strip(), expected_output)
-          self.assertEqual(count, 2)  # Three sentences redacted
-
-  if __name__ == '__main__':
-      unittest.main()
-  ```
-
-- **`test_address.py`**:
-  This file tests the redaction of physical addresses from the text. It includes tests for redacting addresses found in email signatures and body content, ensuring that the correct number of characters is replaced, while non-address parts of the text are preserved.
-
-  ```python
-  # test_address.py
-  
-  import unittest
-  import textwrap
-  from redactor import redact_addresses
-  
-  class TestRedactAddresses(unittest.TestCase):
-
-      def test_address_in_signature(self):
-          text = textwrap.dedent("""
-              From: someone@example.com
-              To: recipient@example.com
-  
-              Best regards,
-              John Doe
-              ABC Corporation
-              123 Main Street, 5th Floor
-              Springfield, IL 62704
-          """)
-          redacted_line1 = '█' * len('123 Main Street, 5th Floor')  # 24 '█'
-          redacted_line2 = '█' * len('Springfield, IL 62704')      # 22 '█'
-
-          expected_output = textwrap.dedent(f"""
-              From: someone@example.com
-              To: recipient@example.com
-  
-              Best regards,
-              John Doe
-              ABC Corporation
-              {redacted_line1}
-              {redacted_line2}
-          """)
-
-          redacted_text, _ = redact_addresses(text)
-          self.assertEqual(redacted_text.strip(), expected_output.strip())
-
-      def test_address_in_body(self):
-          text = textwrap.dedent("""
-              Please send the documents to the following address:
-  
-              456 Elm Street
-              Anytown, CA 90210
-  
-              Thank you.
-          """)
-          redacted_line1 = '█' * len('456 Elm Street')        # 14 '█'
-          redacted_line2 = '█' * len('Anytown, CA 90210')    # 18 '█'
-
-          expected_output = textwrap.dedent(f"""
-              Please send the documents to the following address:
-  
-              {redacted_line1}
-              {redacted_line2}
-  
-              Thank you.
-          """)
-
-          redacted_text, _ = redact_addresses(text)
-          self.assertEqual(redacted_text.strip(), expected_output.strip())
-
-      def test_no_address(self):
-          text = textwrap.dedent("""
-              Hello,
-  
-              There is no address in this email.
-  
-              Best,
-              Jane
-          """)
-          expected_output = textwrap.dedent("""
-              Hello,
-  
-              There is no address in this email.
-  
-              Best,
-              Jane
-          """)
-          redacted_text, _ = redact_addresses(text)
-          self.assertEqual(redacted_text.strip(), expected_output.strip())
-
-  if __name__ == '__main__':
-      unittest.main()
-  ```
 
 ### Directory Structure
 ```
@@ -943,6 +805,11 @@ This project is licensed under the MIT License.
 
 
  
+
+
+
+
+
 
 
 
