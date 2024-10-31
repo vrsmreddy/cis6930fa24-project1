@@ -779,20 +779,67 @@ cis6930fa24-project1/
     └── test_concepts.py
 ```
 
-### Collaborators
-- 
-### Assumptions
-- **Whitespace Censoring**: Whitespace between words (e.g., in names) is also censored to prevent partial disclosure of sensitive information.
-- **Concept Context**: Concept detection includes synonymous terms based on semantic similarity, which may result in some sentences being over-redacted to ensure privacy.
+### Collaborators:
+1. **StackOverflow**
+   - https://stackoverflow.com/questions/11456670/regular-expression-for-address-field-validation
+     - Helped in understanding and building regex patterns for address field validation.
 
-### Known Bugs and Limitations
-- **Performance**: The redaction of large files may be slow due to the computation of semantic similarities for concepts.
-- **False Positives**: The current approach may lead to false positives, especially in concept redaction where semantically similar but contextually irrelevant terms may be redacted.
-### External Resources
-- Stack Overflow: [Regex to check if form input ends with .pdf](https://stackoverflow.com/questions/34516190/how-to-use-regex-to-check-if-form-input-ends-with-pdf)
-- SpaCy Documentation
-- Sentence Transformers Documentation
-- WordNet via NLTK
+2. **StackOverflow**
+   - https://stackoverflow.com/questions/62824749/cosine-similarity-with-synonyms
+     - Assisted in implementing cosine similarity for identifying synonyms in the redaction process.
+3. **StackOverflow**
+   - https://stackoverflow.com/questions/31199905/regex-for-extracting-meta-data
+     - Provided insights for regex used to extract and redact metadata fields.
+
+These resources were used as a guide to help develop some of the core functionalities in the project.
+
+
+
+# Bugs and Assumptions
+
+## Bugs
+
+1. **Inconsistent Redaction for Synonyms**
+   - The current implementation of concept redaction using cosine similarity may inconsistently redact sentences depending on the context. Synonyms that are not well-represented in the training data for the sentence transformer might not be identified correctly, leading to potential misses in redaction.
+
+2. **Regex Overlapping Issues**
+   - In some cases, overlapping patterns may lead to incorrect redaction when multiple regular expressions apply to a single segment of the text. This may result in partial redactions or unexpected text outputs.
+
+3. **Performance Limitations with Large Files**
+   - The redaction process, particularly for large text files, may suffer from performance issues due to repeated regex matching and NLP processing. This can result in slow processing times.
+
+4. **NER False Positives**
+   - The spaCy Named Entity Recognition (NER) model can produce false positives when identifying names, dates, or other entities, leading to unintended redactions of words that are not sensitive information.
+
+5. **Formatting Issues Post-Redaction**
+   - Redacting text with multiline strings sometimes results in formatting issues, such as excessive newline characters or unintended indentation changes, which could affect the readability of the redacted output.
+
+## Assumptions
+
+1. **Case Insensitivity**
+   - All regex patterns are assumed to be case-insensitive to ensure consistent redaction across different text formats, regardless of capitalization.
+
+2. **Common Folder Names**
+   - In metadata fields, folder names like "Inbox," "Sent Items," and "Trash" are assumed to be non-sensitive and are not redacted, based on the assumption that these are generic terms.
+
+3. **Durations Are Not Sensitive**
+   - Durations (e.g., "3 weeks," "5 months") are assumed to be non-sensitive and are therefore not redacted during the date redaction process.
+
+4. **Concept Matching Based on Similarity Threshold**
+   - A similarity threshold of 0.6 is assumed to be sufficient for identifying related terms for concept redaction. This value was chosen to balance precision and recall, but it may not cover all possible variations of a concept.
+
+5. **No Redaction of Short Words**
+   - Words with fewer than three characters are assumed not to be sensitive and are therefore excluded from redaction. This helps to reduce the risk of over-redaction and preserves common short words.
+
+6. **File Format Assumption**
+   - The input files are assumed to be plain text files encoded in UTF-8. Files in other formats or encodings might not be processed correctly without additional handling.
+
+7. **Metadata Redaction Scope**
+   - Only specific metadata fields (e.g., "X-From," "X-To," "X-Origin") are targeted for redaction. Any additional metadata fields that are not explicitly defined may not be redacted.
+
+
+
+
 
 ### Submission
 The project repository is hosted privately on GitHub and collaborators have been added as required. The submission follows all guidelines, including version tagging for grading (`v1.0`, `v2.0`, etc.).
