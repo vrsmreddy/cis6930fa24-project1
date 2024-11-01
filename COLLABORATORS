@@ -1,13 +1,6 @@
-### Collaborators:
-1. **StackOverflow**
-   - https://stackoverflow.com/questions/11456670/regular-expression-for-address-field-validation
-     - Helped in understanding and building regex patterns for address field validation.
-
-2. **StackOverflow**
-   - https://stackoverflow.com/questions/62824749/cosine-similarity-with-synonyms
-     - Assisted in implementing cosine similarity for identifying synonyms in the redaction process.
-3. **StackOverflow**
-   - https://stackoverflow.com/questions/31199905/regex-for-extracting-meta-data
-     - Provided insights for regex used to extract and redact metadata fields.
+ Collaborators:
+1. StackOverflow - https://stackoverflow.com/questions/11456670/regular-expression-for-address-field-validation - Helped in understanding and building regex patterns for address field validation.
+2. StackOverflow - https://stackoverflow.com/questions/62824749/cosine-similarity-with-synonyms - Assisted in implementing cosine similarity for identifying synonyms in the redaction process.
+3. StackOverflow- https://stackoverflow.com/questions/31199905/regex-for-extracting-meta-data - Provided insights for regex used to extract and redact metadata fields.
 
 These resources were used as a guide to help develop some of the core functionalities in the project.
