@@ -115,6 +115,7 @@ def redact_metadata_fields(text):
         (r'(\\)([A-Za-z]+, [A-Za-z ]+)', redact_match),
         # X-Folder paths
         (r'(X-Folder: \\)([^\n]+)', redact_folder_match),
+        (r'(X-Folder: )([^\n]+)', redact_folder_match),
         # X-Origin
         (r'(X-Origin: )([A-Za-z-]+)', redact_match),
         # Updated X-FileName pattern to redact only the name
