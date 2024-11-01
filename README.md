@@ -90,7 +90,7 @@ To determine the context of a concept, the system uses the SentenceTransformer m
 The `--stats` flag provides a summary of the redaction process. The summary includes:
 - The types of entities redacted (e.g., names, dates, phones, addresses, concepts).
 - The count of each entity type redacted.
-- Optionally, the start and end index of each redacted term within the text.
+
 
 Example stats format:
 ```
