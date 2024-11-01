@@ -72,6 +72,15 @@ The redactor is implemented using Python with NLP support from SpaCy, NLTK, and 
 ### Parameters
 
 - **--input**: Takes a glob pattern representing the files to be processed. Supports multiple inputs.
+
+  ```sh
+   pipenv run python redactor.py --input '*.txt' \
+                               --names --dates --phones --address \
+                               --concept 'kids' \
+                               --output 'files/' \
+                               --stats stderr
+   ```
+
 - **--output**: Specifies the directory where censored files will be stored. The files are saved with the `.censored` extension.
 - **Censor Flags**:
   - `--names`: Redacts names (detected using SpaCy's named entity recognition).
