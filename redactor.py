@@ -60,12 +60,22 @@ def redact_names(text):
 
     # Find email addresses using regex and add to redactions
     email_pattern = re.compile(
-        r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b',
+        r'\b[A-Za-z0-9._%+\'+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b',
         re.IGNORECASE
     )
     for match in email_pattern.finditer(text):
         start, end = match.span()
         redactions.append((start, end, redact_text_with_char(match.group())))
+        count += 1
+    
+    # Additional regex-based name redaction for common salutations
+    salutation_pattern = re.compile(
+        r'\b(Dear|Hello|Hi)\s+([A-Z][a-z]+)\b',
+        re.IGNORECASE
+    )
+    for match in salutation_pattern.finditer(text):
+        start, end = match.span(2)  # Redact only the name part
+        redactions.append((start, end, redact_text_with_char(match.group(2))))
         count += 1
 
     # Apply all redactions in reverse order to avoid disrupting indices
