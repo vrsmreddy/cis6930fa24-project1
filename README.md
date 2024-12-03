@@ -1,6 +1,6 @@
 # README.md
 
-## CIS 6930, Fall 2024 Assignment 1: The Redactor
+## CIS 6930, Fall 2024 Project 1: The Redactor
 
 ### Author
 Rama Satyanarayana Murthy Reddy Velagala (r.velagala@ufl.edu)
